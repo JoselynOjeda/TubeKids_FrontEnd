@@ -1,24 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { obtenerVideos, agregarVideo, eliminarVideo } from "./api";
 
 function App() {
+  const [videos, setVideos] = useState([]);
+  const [nombre, setNombre] = useState("");
+  const [url, setUrl] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+
+  useEffect(() => {
+    cargarVideos();
+  }, []);
+
+  const cargarVideos = async () => {
+    const res = await obtenerVideos();
+    setVideos(res.data);
+  };
+
+  const manejarAgregar = async () => {
+    await agregarVideo({ nombre, url, descripcion });
+    cargarVideos();
+  };
+
+  const manejarEliminar = async (id) => {
+    await eliminarVideo(id);
+    cargarVideos();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save.
-          
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Gestión de Videos</h1>
+      <input placeholder="Nombre" onChange={(e) => setNombre(e.target.value)} />
+      <input placeholder="URL" onChange={(e) => setUrl(e.target.value)} />
+      <input placeholder="Descripción" onChange={(e) => setDescripcion(e.target.value)} />
+      <button onClick={manejarAgregar}>Agregar Video</button>
+
+      <ul>
+        {videos.map((video) => (
+          <li key={video._id}>
+            {video.nombre} - <a href={video.url} target="_blank">Ver</a>
+            <button onClick={() => manejarEliminar(video._id)}>Eliminar</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
