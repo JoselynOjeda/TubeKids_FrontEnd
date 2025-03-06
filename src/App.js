@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { obtenerVideos, agregarVideo, eliminarVideo } from "./api";
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/videos"; // Asegúrate de que coincida con tu backend
 
@@ -12,6 +11,7 @@ function App() {
   const [url, setUrl] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [editando, setEditando] = useState(null);
+  const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
     cargarVideos();
@@ -19,8 +19,7 @@ function App() {
 
   const cargarVideos = async () => {
     try {
-      const res = await obtenerVideos();
-      console.log("Datos recibidos:", res.data);
+      const res = await axios.get(`${API_URL}?q=${busqueda}`);
       setVideos(res.data);
     } catch (error) {
       console.error("Error cargando videos:", error);
@@ -29,7 +28,6 @@ function App() {
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
-    console.log("Enviando datos:", { editando, nombre, url, descripcion });
 
     if (!nombre || !url) {
       alert("El nombre y la URL son obligatorios.");
@@ -38,11 +36,9 @@ function App() {
 
     try {
       if (editando) {
-        // Verifica que el ID es correcto antes de enviar
-        console.log("Actualizando video con ID:", editando);
-        await axios.put(`http://localhost:5000/api/videos/${editando}`, { nombre, url, descripcion });
+        await axios.put(`${API_URL}/${editando}`, { nombre, url, descripcion });
       } else {
-        await axios.post("http://localhost:5000/api/videos", { nombre, url, descripcion });
+        await axios.post(API_URL, { nombre, url, descripcion });
       }
       limpiarFormulario();
       cargarVideos();
@@ -53,7 +49,6 @@ function App() {
   };
 
   const manejarEditar = (video) => {
-    console.log("Editando video con ID:", video._id);
     setEditando(video._id);
     setNombre(video.nombre);
     setUrl(video.url);
@@ -69,6 +64,11 @@ function App() {
     }
   };
 
+  const manejarBuscar = (e) => {
+    e.preventDefault();
+    cargarVideos();
+  };
+
   const limpiarFormulario = () => {
     setEditando(null);
     setNombre("");
@@ -77,36 +77,84 @@ function App() {
   };
 
   return (
-    <div className="container mt-4">
-      <h1 className="text-center">Gestión de Videos</h1>
-      <form className="card p-4 mb-4" onSubmit={manejarSubmit}>
-        <input
-          type="text"
-          placeholder="Nombre del video"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          className="form-control mb-2"
-          required
-        />
-        <input
-          type="text"
-          placeholder="URL del video (YouTube)"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="form-control mb-2"
-          required
-        />
-        <textarea
-          placeholder="Descripción"
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-          className="form-control mb-2"
-        ></textarea>
-        <button className="btn btn-primary w-100">
-          {editando ? "Actualizar Video" : "Agregar Video"}
+    <div className="container-fluid">
+      {/* NAVBAR */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <a className="navbar-brand" href="#">Gestión de Videos</a>
+        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
         </button>
-      </form>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav">
+            <li className="nav-item active">
+              <a className="nav-link" href="#">Inicio</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="#">Videos</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="#">Playlist</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="#">Salir</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
+      {/* FORMULARIO DE BÚSQUEDA */}
+      <div className="row mt-3">
+        <div className="col-md-12">
+          <form onSubmit={manejarBuscar} className="form-inline mb-3">
+            <input
+              type="text"
+              className="form-control mr-sm-2"
+              placeholder="Buscar videos"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+            <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+          </form>
+        </div>
+      </div>
+
+      {/* FORMULARIO DE AÑADIR VIDEOS */}
+      <div className="row">
+        <div className="col-md-6 offset-md-3">
+          <div className="card p-4 mb-4">
+            <h5 className="text-center">{editando ? "Actualizar Video" : "Agregar Video"}</h5>
+            <form onSubmit={manejarSubmit}>
+              <input
+                type="text"
+                placeholder="Nombre del video"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className="form-control mb-2"
+                required
+              />
+              <input
+                type="text"
+                placeholder="URL del video (YouTube)"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="form-control mb-2"
+                required
+              />
+              <textarea
+                placeholder="Descripción"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                className="form-control mb-2"
+              ></textarea>
+              <button className="btn btn-primary w-100">
+                {editando ? "Actualizar Video" : "Agregar Video"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {/* LISTA DE VIDEOS */}
       <div className="row">
         {videos.map((video) => (
           <div key={video._id} className="col-md-4 mb-4">
