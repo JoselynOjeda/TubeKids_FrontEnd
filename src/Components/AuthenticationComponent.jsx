@@ -3,7 +3,7 @@ import * as Components from './AuthenticationStyles';
 import { FaEnvelope, FaLock, FaUser, FaPhone, FaIdBadge, FaGlobe, FaCalendarAlt } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
-
+const API_URL = "http://localhost:5000/api/users/";
 
 const AuthenticationComponent = () => {
     const [signIn, toggle] = useState(true);
@@ -28,16 +28,16 @@ const AuthenticationComponent = () => {
     const handleChange = (e, isSignIn = false) => {
         const { name, value } = e.target;
         if (isSignIn) {
-            setSignInData(prev => ({ ...prev, [name]: value }));
+            setSignInData({ ...signInData, [name]: value });
         } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
+            setFormData({ ...formData, [name]: value });
         }
     };
 
 
+
     const validateForm = () => {
         let errors = [];
-        // Common validations
         if (!formData.email.includes('@')) {
             errors.push("Invalid email format.");
         }
@@ -50,7 +50,6 @@ const AuthenticationComponent = () => {
         if (!signIn && !formData.name) {
             errors.push("Name is required.");
         }
-        // Registration-specific validations
         if (!signIn && !formData.phone) {
             errors.push("Phone number is required.");
         }
@@ -66,24 +65,76 @@ const AuthenticationComponent = () => {
         return true;
     };
 
+    const handleSignup = async () => {
+        if (!validateForm()) return;
+        try {
+            const response = await fetch(`${API_URL}signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password,
+                    phone: formData.phone,
+                    pin: formData.pin,
+                    name: formData.name,
+                    surname: formData.surname,
+                    country: formData.country,
+                    birthDate: formData.birthDate
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                Swal.fire('Success!', 'Your registration is complete!', 'success');
+            } else {
+                throw new Error(data.message || 'Failed to register');
+            }
+        } catch (error) {
+            Swal.fire('Error!', error.message, 'error');
+        }
+    };
+
+    const handleLogin = async () => {
+        if (!signInData.email || !signInData.password) {
+            Swal.fire('Error!', 'Please provide both email and password.', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_URL}login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: signInData.email,
+                    password: signInData.password
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                Swal.fire('Success!', 'You have successfully logged in.', 'success');
+            } else {
+                throw new Error(data.message || 'Failed to log in');
+            }
+        } catch (error) {
+            Swal.fire('Error!', error.message, 'error');
+        }
+    };
+
     const handleSubmit = (event, isSignIn = false) => {
         event.preventDefault();
-        const isValid = validateForm();
-        if (!isValid) return;
-
         if (isSignIn) {
-            // Simulate login API call here
-            Swal.fire('Success!', 'You have successfully logged in.', 'success');
+            handleLogin();
         } else {
-            // Simulate registration API call here
-            Swal.fire('Success!', 'Your registration is complete!', 'success');
+            handleSignup();
         }
     };
 
     return (
         <Components.Container>
             <Components.SignUpContainer signinIn={signIn}>
-                <Components.SignUpForm onSubmit={handleSubmit}>
+                <Components.SignUpForm onSubmit={(e) => handleSubmit(e, false)}>
                     <Components.Title>Create Account</Components.Title>
                     <Components.InputContainer>
                         <Components.Icon><FaUser /></Components.Icon>
@@ -133,11 +184,21 @@ const AuthenticationComponent = () => {
                     <Components.Title>Sign In</Components.Title>
                     <Components.InputContainer>
                         <Components.Icon><FaEnvelope /></Components.Icon>
-                        <Components.Input type='email' placeholder='Email' />
+                        <Components.Input
+                            type='email'
+                            placeholder='Email'
+                            name='email'
+                            value={signInData.email}
+                            onChange={(e) => handleChange(e, true)} />
                     </Components.InputContainer>
                     <Components.InputContainer>
                         <Components.Icon><FaLock /></Components.Icon>
-                        <Components.Input type='password' placeholder='Password' />
+                        <Components.Input
+                            type='password'
+                            placeholder='Password'
+                            name='password'
+                            value={signInData.password}
+                            onChange={(e) => handleChange(e, true)} />
                     </Components.InputContainer>
                     <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
                     <Components.Button>Sign In</Components.Button>
