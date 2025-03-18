@@ -5,8 +5,20 @@ import Swal from 'sweetalert2';
 
 const API_URL = "http://localhost:5000/api/users/";
 
+const initialState = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    pin: '',
+    name: '',
+    surname: '',
+    country: '',
+    birthDate: '',
+};
+
 const AuthenticationComponent = () => {
-    const [signIn, toggle] = useState(true);
+    const [signIn, toggle] = useState(initialState);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -32,6 +44,10 @@ const AuthenticationComponent = () => {
         } else {
             setFormData({ ...formData, [name]: value });
         }
+    };
+
+    const resetForm = () => {
+        setFormData(initialState);
     };
 
 
@@ -87,6 +103,8 @@ const AuthenticationComponent = () => {
             const data = await response.json();
             if (response.ok) {
                 Swal.fire('Success!', 'Your registration is complete!', 'success');
+                resetForm();
+                toggle(true); 
             } else {
                 throw new Error(data.message || 'Failed to register');
             }
