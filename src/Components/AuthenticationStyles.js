@@ -21,7 +21,7 @@ export const Container = styled.div`
   overflow: hidden;
   width: 1000px; // Increased width for more space
   max-width: 100%; // Ensures it does not exceed the width of the viewport
-  min-height: 500px; // Increased height to accommodate larger form elements
+  min-height: 485px; // Increased height to accommodate larger form elements
   display: flex;
   justify-content: center;
   align-items: center; // Center items vertically and horizontally
@@ -43,7 +43,7 @@ export const SignUpContainer = styled.div`
    opacity: 1;
    z-index: 5;
  `
-        : null}
+    : null}
 `;
 
 
@@ -189,7 +189,7 @@ overflow: hidden;
 transition: transform 0.6s ease-in-out;
 z-index: 100;
 ${props =>
-        props.signinIn !== true ? `transform: translateX(-100%);` : null}
+    props.signinIn !== true ? `transform: translateX(-100%);` : null}
 `;
 
 export const Overlay = styled.div`

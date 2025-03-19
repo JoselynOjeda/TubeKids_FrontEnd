@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import * as Components from './AuthenticationStyles';
 import { FaEnvelope, FaLock, FaUser, FaPhone, FaIdBadge, FaGlobe, FaCalendarAlt } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+
 
 const API_URL = "http://localhost:5000/api/users/";
 
@@ -17,7 +19,11 @@ const initialState = {
     birthDate: '',
 };
 
+
+
+
 const AuthenticationComponent = () => {
+    const navigate = useNavigate(); 
     const [signIn, toggle] = useState(initialState);
     const [formData, setFormData] = useState({
         email: '',
@@ -36,6 +42,7 @@ const AuthenticationComponent = () => {
         password: '',
     });
     const [errors, setErrors] = useState({});
+    const [userEmail, setUserEmail] = useState('');
 
     const handleChange = (e, isSignIn = false) => {
         const { name, value } = e.target;
@@ -132,6 +139,9 @@ const AuthenticationComponent = () => {
             const data = await response.json();
             if (response.ok) {
                 Swal.fire('Success!', 'You have successfully logged in.', 'success');
+                const userName = data.name; // Make sure to adjust according to your actual data structure
+            navigate('/Profile-Selector', { state: { email: signInData.email, name: userName } });
+             
             } else {
                 throw new Error(data.message || 'Failed to log in');
             }
