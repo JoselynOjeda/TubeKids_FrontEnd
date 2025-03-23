@@ -9,7 +9,7 @@ const VideoManagement = () => {
   const handleBackToProfiles = () => {
     // Store admin authentication state in localStorage
     localStorage.setItem('adminAuthenticated', 'true');
-    navigate("/");
+    navigate("/profile-selector");
   };
 
   // Handle back to user management

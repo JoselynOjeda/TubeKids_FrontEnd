@@ -19,9 +19,6 @@ const initialState = {
     birthDate: '',
 };
 
-
-
-
 const AuthenticationComponent = () => {
     const navigate = useNavigate(); 
     const [signIn, toggle] = useState(initialState);
@@ -139,8 +136,8 @@ const AuthenticationComponent = () => {
             const data = await response.json();
             if (response.ok) {
                 Swal.fire('Success!', 'You have successfully logged in.', 'success');
-                const userName = data.name; // Make sure to adjust according to your actual data structure
-            navigate('/Profile-Selector', { state: { email: signInData.email, name: userName } });
+                localStorage.setItem('token', data.token);
+                navigate('/profile-selector')
              
             } else {
                 throw new Error(data.message || 'Failed to log in');

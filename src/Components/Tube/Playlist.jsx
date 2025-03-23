@@ -10,7 +10,7 @@ const Playlist = () => {
   // Handle back to profiles
   const handleBackToProfiles = () => {
     // Navigate back to the main page without any authentication state
-    navigate("/");
+    navigate("/profile-selector");
   };
 
   // If no profile was passed, redirect to home
