@@ -7,26 +7,34 @@
 body {
   position: relative;
   background: #f6f5f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
   font-family: "Montserrat", sans-serif;
-  height: 100vh;
-  margin: -20px 0 50px;
-  overflow: hidden; /* Asegura que el pseudo-elemento no se extienda fuera del cuerpo */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 body::before {
-  content: '';
-  position: absolute;
+  content: "";
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('./assets/fondo.png');
+  background-image: url("./assets/fondo.png");
   background-size: cover;
   background-position: center;
-  filter: blur(3px); /* Aplica el desenfoque */
-  z-index: -1; /* Asegura que el fondo esté detrás del contenido */
+  filter: blur(3px);
+  z-index: -1;
+}
+
+/* Clase específica para la página de autenticación */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  margin: -20px 0 50px;
+  overflow: hidden;
 }

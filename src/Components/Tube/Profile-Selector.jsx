@@ -49,6 +49,12 @@ const TubeKids = () => {
 
   useEffect(() => {
     fetchProfiles();
+
+    const shouldShowUserManagement = localStorage.getItem('showUserManagement');
+    if (shouldShowUserManagement === 'true') {
+      setCurrentScreen('userManagement');
+      localStorage.removeItem('showUserManagement'); // Limpiamos la bandera después de usarla
+    }
   }, []);
 
   // State para control de UI
@@ -83,28 +89,28 @@ const TubeKids = () => {
       alert("Please ensure all fields are filled correctly.");
       return;
     }
-  
+
     const token = localStorage.getItem('token');
     const headers = {
       Authorization: `Bearer ${token}`
     };
-  
+
     const profileData = {
       name: newProfile.name,
       pin: newProfile.pin,
       avatar: selectedAvatar,
     };
-  
+
     try {
       const response = await axios.post(API_URL, profileData, { headers });
-  
+
       setProfiles([...profiles, response.data]);
       setNewProfile({ name: "", pin: "", avatar: "" });
       setSelectedAvatar("");
-  
+
       // ✅ Cierra el modal de agregar
       setIsAddProfileOpen(false);
-  
+
       // (Opcional) Mostrar mensaje de éxito
       Swal.fire('Success!', 'Profile created successfully.', 'success');
     } catch (error) {
@@ -113,7 +119,7 @@ const TubeKids = () => {
     }
   };
 
-  
+
   // Manejar la selección de un perfil
   const handleSelectProfile = (profile) => {
     setCurrentProfile(profile);
@@ -144,18 +150,18 @@ const TubeKids = () => {
       alert("Please ensure all fields are filled correctly.");
       return;
     }
-  
+
     const token = localStorage.getItem('token');
     const headers = {
       Authorization: `Bearer ${token}`
     };
-  
+
     const updatedProfileData = {
       name: newProfile.name,
       pin: newProfile.pin,
       avatar: selectedAvatar, // <- Aquí está el cambio
     };
-  
+
     try {
       const response = await axios.put(`${API_URL}/${currentProfile._id}`, updatedProfileData, { headers });
       setProfiles(profiles.map(profile => profile._id === currentProfile._id ? response.data : profile));
@@ -178,16 +184,16 @@ const TubeKids = () => {
   // Manejar la eliminación de un perfil
   const handleDeleteProfile = async () => {
     const token = localStorage.getItem('token');
-  
+
     if (!token) {
       console.error("No token found in localStorage");
       return Swal.fire('Error', 'No authorization token found. Please login again.', 'error');
     }
-  
+
     const headers = {
       Authorization: `Bearer ${token}`
     };
-  
+
     try {
       await axios.delete(`${API_URL}/${currentProfile._id}`, { headers }); // ← aquí se pasa el token
       setProfiles(profiles.filter(profile => profile._id !== currentProfile._id));

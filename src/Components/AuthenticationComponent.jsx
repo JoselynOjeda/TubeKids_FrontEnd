@@ -20,7 +20,7 @@ const initialState = {
 };
 
 const AuthenticationComponent = () => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const [signIn, toggle] = useState(initialState);
     const [formData, setFormData] = useState({
         email: '',
@@ -108,7 +108,7 @@ const AuthenticationComponent = () => {
             if (response.ok) {
                 Swal.fire('Success!', 'Your registration is complete!', 'success');
                 resetForm();
-                toggle(true); 
+                toggle(true);
             } else {
                 throw new Error(data.message || 'Failed to register');
             }
@@ -138,7 +138,7 @@ const AuthenticationComponent = () => {
                 Swal.fire('Success!', 'You have successfully logged in.', 'success');
                 localStorage.setItem('token', data.token);
                 navigate('/profile-selector')
-             
+
             } else {
                 throw new Error(data.message || 'Failed to log in');
             }
@@ -157,103 +157,105 @@ const AuthenticationComponent = () => {
     };
 
     return (
-        <Components.Container>
-            <Components.SignUpContainer signinIn={signIn}>
-                <Components.SignUpForm onSubmit={(e) => handleSubmit(e, false)}>
-                    <Components.Title>Create Account</Components.Title>
-                    <Components.InputContainer>
-                        <Components.Icon><FaUser /></Components.Icon>
-                        <Components.Input type='text' placeholder='Name' name='name' value={formData.name} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaUser /></Components.Icon>
-                        <Components.Input type='text' placeholder='Surname' name='surname' value={formData.surname} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaEnvelope /></Components.Icon>
-                        <Components.Input type='email' placeholder='Email' name='email' value={formData.email} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaLock /></Components.Icon>
-                        <Components.Input type='password' placeholder='Password' name='password' value={formData.password} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaLock /></Components.Icon>
-                        <Components.Input type='password' placeholder='Repeat Password' name='confirmPassword' value={formData.confirmPassword} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaPhone /></Components.Icon>
-                        <Components.Input type='text' placeholder='Phone Number' name='phone' value={formData.phone} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaIdBadge /></Components.Icon>
-                        <Components.Input type='text' placeholder='Pin (6 digits)' name='pin' value={formData.pin} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaGlobe /></Components.Icon>
-                        <Components.Input type='text' placeholder='Country' name='country' value={formData.country} onChange={handleChange} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaCalendarAlt /></Components.Icon>
-                        <Components.Input type='date' placeholder='Date of Birth' name='birthDate' value={formData.birthDate} onChange={handleChange} />
-                    </Components.InputContainer>
-                    {Object.values(errors).map(error => (
-                        <Components.Paragraph key={error} style={{ color: 'red' }}>{error}</Components.Paragraph>
-                    ))}
-                    <Components.Button type='submit'>Sign Up</Components.Button>
-                </Components.SignUpForm>
-            </Components.SignUpContainer>
+        <div className="auth-page"> {/* Añadir esta div con la clase auth-page */}
+            <Components.Container>
+                <Components.SignUpContainer signinIn={signIn}>
+                    <Components.SignUpForm onSubmit={(e) => handleSubmit(e, false)}>
+                        <Components.Title>Create Account</Components.Title>
+                        <Components.InputContainer>
+                            <Components.Icon><FaUser /></Components.Icon>
+                            <Components.Input type='text' placeholder='Name' name='name' value={formData.name} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaUser /></Components.Icon>
+                            <Components.Input type='text' placeholder='Surname' name='surname' value={formData.surname} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaEnvelope /></Components.Icon>
+                            <Components.Input type='email' placeholder='Email' name='email' value={formData.email} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaLock /></Components.Icon>
+                            <Components.Input type='password' placeholder='Password' name='password' value={formData.password} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaLock /></Components.Icon>
+                            <Components.Input type='password' placeholder='Repeat Password' name='confirmPassword' value={formData.confirmPassword} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaPhone /></Components.Icon>
+                            <Components.Input type='text' placeholder='Phone Number' name='phone' value={formData.phone} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaIdBadge /></Components.Icon>
+                            <Components.Input type='text' placeholder='Pin (6 digits)' name='pin' value={formData.pin} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaGlobe /></Components.Icon>
+                            <Components.Input type='text' placeholder='Country' name='country' value={formData.country} onChange={handleChange} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaCalendarAlt /></Components.Icon>
+                            <Components.Input type='date' placeholder='Date of Birth' name='birthDate' value={formData.birthDate} onChange={handleChange} />
+                        </Components.InputContainer>
+                        {Object.values(errors).map(error => (
+                            <Components.Paragraph key={error} style={{ color: 'red' }}>{error}</Components.Paragraph>
+                        ))}
+                        <Components.Button type='submit'>Sign Up</Components.Button>
+                    </Components.SignUpForm>
+                </Components.SignUpContainer>
 
-            <Components.SignInContainer signinIn={signIn}>
-                <Components.SignInForm onSubmit={(e) => handleSubmit(e, true)}>
-                    <Components.Title>Sign In</Components.Title>
-                    <Components.InputContainer>
-                        <Components.Icon><FaEnvelope /></Components.Icon>
-                        <Components.Input
-                            type='email'
-                            placeholder='Email'
-                            name='email'
-                            value={signInData.email}
-                            onChange={(e) => handleChange(e, true)} />
-                    </Components.InputContainer>
-                    <Components.InputContainer>
-                        <Components.Icon><FaLock /></Components.Icon>
-                        <Components.Input
-                            type='password'
-                            placeholder='Password'
-                            name='password'
-                            value={signInData.password}
-                            onChange={(e) => handleChange(e, true)} />
-                    </Components.InputContainer>
-                    <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
-                    <Components.Button>Sign In</Components.Button>
-                </Components.SignInForm>
-            </Components.SignInContainer>
+                <Components.SignInContainer signinIn={signIn}>
+                    <Components.SignInForm onSubmit={(e) => handleSubmit(e, true)}>
+                        <Components.Title>Sign In</Components.Title>
+                        <Components.InputContainer>
+                            <Components.Icon><FaEnvelope /></Components.Icon>
+                            <Components.Input
+                                type='email'
+                                placeholder='Email'
+                                name='email'
+                                value={signInData.email}
+                                onChange={(e) => handleChange(e, true)} />
+                        </Components.InputContainer>
+                        <Components.InputContainer>
+                            <Components.Icon><FaLock /></Components.Icon>
+                            <Components.Input
+                                type='password'
+                                placeholder='Password'
+                                name='password'
+                                value={signInData.password}
+                                onChange={(e) => handleChange(e, true)} />
+                        </Components.InputContainer>
+                        <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
+                        <Components.Button>Sign In</Components.Button>
+                    </Components.SignInForm>
+                </Components.SignInContainer>
 
-            <Components.OverlayContainer signinIn={signIn}>
-                <Components.Overlay signinIn={signIn}>
-                    <Components.LeftOverlayPanel signinIn={signIn}>
-                        <Components.Title>Welcome Back!</Components.Title>
-                        <Components.Paragraph>
-                            Ready for more adventures? Log in with your info!
-                        </Components.Paragraph>
-                        <Components.GhostButton onClick={() => toggle(true)}>
-                            Sign In
-                        </Components.GhostButton>
-                    </Components.LeftOverlayPanel>
+                <Components.OverlayContainer signinIn={signIn}>
+                    <Components.Overlay signinIn={signIn}>
+                        <Components.LeftOverlayPanel signinIn={signIn}>
+                            <Components.Title>Welcome Back!</Components.Title>
+                            <Components.Paragraph>
+                                Ready for more adventures? Log in with your info!
+                            </Components.Paragraph>
+                            <Components.GhostButton onClick={() => toggle(true)}>
+                                Sign In
+                            </Components.GhostButton>
+                        </Components.LeftOverlayPanel>
 
-                    <Components.RightOverlayPanel signinIn={signIn}>
-                        <Components.Title>Hello, New Explorer!</Components.Title>
-                        <Components.Paragraph>
-                            Join us and discover a world of fun and learning!
-                        </Components.Paragraph>
-                        <Components.GhostButton onClick={() => toggle(false)}>
-                            Sign Up
-                        </Components.GhostButton>
-                    </Components.RightOverlayPanel>
-                </Components.Overlay>
-            </Components.OverlayContainer>
-        </Components.Container>
+                        <Components.RightOverlayPanel signinIn={signIn}>
+                            <Components.Title>Hello, New Explorer!</Components.Title>
+                            <Components.Paragraph>
+                                Join us and discover a world of fun and learning!
+                            </Components.Paragraph>
+                            <Components.GhostButton onClick={() => toggle(false)}>
+                                Sign Up
+                            </Components.GhostButton>
+                        </Components.RightOverlayPanel>
+                    </Components.Overlay>
+                </Components.OverlayContainer>
+            </Components.Container>
+        </div>
     );
 };
 
