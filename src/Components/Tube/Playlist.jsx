@@ -14,6 +14,8 @@ const Playlist = () => {
   const [videos, setVideos] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredVideos, setFilteredVideos] = useState([])
+  const [selectedVideo, setSelectedVideo] = useState(null)
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false)
 
   // Fetch playlists and filter by profile ID
   useEffect(() => {
@@ -28,11 +30,8 @@ const Playlist = () => {
         const data = await response.json()
 
         // Filtrar por el perfil actual
-        const filtered = data.filter((playlist) =>
-          playlist.assignedProfiles.includes(profile.id || profile._id)
-        )
+        const filtered = data.filter((playlist) => playlist.assignedProfiles.includes(profile.id || profile._id))
         setPlaylists(filtered)
-
       } catch (error) {
         console.error("Error fetching playlists:", error)
       }
@@ -64,9 +63,7 @@ const Playlist = () => {
   // Filtrar videos basados en el término de búsqueda
   useEffect(() => {
     if (selectedPlaylist) {
-      const playlistVideos = videos.filter((video) =>
-        selectedPlaylist.videos.includes(video._id)
-      )
+      const playlistVideos = videos.filter((video) => selectedPlaylist.videos.includes(video._id))
 
       if (searchTerm.trim() === "") {
         setFilteredVideos(playlistVideos)
@@ -74,7 +71,7 @@ const Playlist = () => {
         const filtered = playlistVideos.filter(
           (video) =>
             video.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            video.description.toLowerCase().includes(searchTerm.toLowerCase())
+            video.description.toLowerCase().includes(searchTerm.toLowerCase()),
         )
         setFilteredVideos(filtered)
       }
@@ -82,7 +79,7 @@ const Playlist = () => {
       const filtered = videos.filter(
         (video) =>
           video.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          video.description.toLowerCase().includes(searchTerm.toLowerCase())
+          video.description.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       setFilteredVideos(filtered)
     } else {
@@ -104,8 +101,22 @@ const Playlist = () => {
     setSearchTerm(e.target.value)
   }
 
+  // Extract YouTube video ID from URL
+  const getYoutubeId = (url) => {
+    if (!url) return null
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+    const match = url.match(regExp)
+    return match && match[2].length === 11 ? match[2] : null
+  }
+
   const handlePlayVideo = (video) => {
-    console.log("Reproduciendo video:", video)
+    setSelectedVideo(video)
+    setShowVideoPlayer(true)
+  }
+
+  const handleCloseVideoPlayer = () => {
+    setShowVideoPlayer(false)
+    setSelectedVideo(null)
   }
 
   const handleBackToProfiles = () => {
@@ -135,11 +146,56 @@ const Playlist = () => {
     )
   }
 
+  const renderVideoPlayer = () => {
+    if (!selectedVideo || !showVideoPlayer) return null
+
+    const videoId = getYoutubeId(selectedVideo.url)
+
+    if (!videoId) {
+      return (
+        <div className="video-player-error">
+          <p>Invalid video URL. Cannot play this video.</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="video-player-overlay">
+        <div className="video-player-container">
+          <div className="video-player-header">
+            <h3>{selectedVideo.name}</h3>
+            <button className="close-player-btn" onClick={handleCloseVideoPlayer}>
+              ✕
+            </button>
+          </div>
+          <div className="video-player-content">
+            <div className="video-player-wrapper">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                title={selectedVideo.name}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="video-player-info">
+              <h4>{selectedVideo.name}</h4>
+              <p className="video-description">{selectedVideo.description}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const renderVideoCard = (video) => (
     <div key={video._id} className="video-card" onClick={() => handlePlayVideo(video)}>
       <div className="video-thumbnail">
         <img src={video.thumbnail || "/placeholder.svg"} alt={video.name} />
         <div className="video-duration">{video.duration || " "}</div>
+        <div className="play-button-overlay">
+          <div className="play-button">▶</div>
+        </div>
       </div>
       <div className="video-info">
         <h3 className="video-title">{video.name}</h3>
@@ -220,11 +276,7 @@ const Playlist = () => {
       ) : (
         <div className="playlists-grid">
           {playlists.map((playlist) => (
-            <div
-              key={playlist._id}
-              className="playlist-card"
-              onClick={() => handleSelectPlaylist(playlist)}
-            >
+            <div key={playlist._id} className="playlist-card" onClick={() => handleSelectPlaylist(playlist)}>
               <div className="playlist-icon">🎵</div>
               <div className="playlist-info">
                 <h3 className="playlist-title">{playlist.name}</h3>
@@ -261,12 +313,13 @@ const Playlist = () => {
           </div>
         </header>
 
-        <main className="tube-kids-content">
-          {selectedPlaylist ? renderPlaylistVideos() : renderPlaylistsList()}
-        </main>
+        <main className="tube-kids-content">{selectedPlaylist ? renderPlaylistVideos() : renderPlaylistsList()}</main>
+
+        {renderVideoPlayer()}
       </div>
     </div>
   )
 }
 
 export default Playlist
+
