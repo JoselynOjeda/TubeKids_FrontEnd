@@ -10,3 +10,10 @@ export const decodeToken = () => {
     return null;
   }
 };
+
+// Verifica si el token pertenece a un administrador
+export const isAdmin = () => {
+  const user = decodeToken();
+  return user?.role === "admin";
+};
+

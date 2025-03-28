@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { decodeToken } from '../../utilities/authUtils';
+import { decodeToken, isAdmin } from '../../utilities/authUtils';
 import "./TubeKids.css";
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -205,8 +205,13 @@ const TubeKids = () => {
   };
 
   const handleAdminAccess = () => {
+    if (!isAdmin()) {
+      Swal.fire("Access Denied", "Only administrators can access this section.", "error");
+      return;
+    }
     setIsAdminPinModalOpen(true);
   };
+  
 
   // Verificar PIN para acceso al perfil
   const handleVerifyProfilePin = () => {

@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { decodeToken } from '../../utilities/authUtils';
+import { decodeToken, isAdmin } from '../../utilities/authUtils';
 import icon from "../../assets/iconpf.jpg";
 import "./TubeKids.css";
 
 const VideoManagement = () => {
   const navigate = useNavigate();
   const user = decodeToken();
-  const userEmail = user?.email
+  const userEmail = user?.email;
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      navigate('/profile-selector');
+    }
+  }, []);
 
   // Estados para gestionar videos y playlists
   const [videos, setVideos] = useState([]);
